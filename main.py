@@ -17,7 +17,7 @@ from telegram.ext import (
 from emoji import CUSTOM_EMOJIS
 
 # ==================== CONFIGURATION ====================
-BOT_TOKEN = "8733443939:AAHgDVdWglA0DdI2Wbyxi1BfrOxOsxAlK_k"
+BOT_TOKEN = "8208003630:AAE9PGWAetvkB2SDcOigYS5Yjfo7UzqUvN4"
 ADMIN_IDS = [8744359777]
 
 OTP_GROUP_URL = "https://t.me/RgxOtp"
