@@ -254,23 +254,52 @@ def db_fetch_all(query, params=()):
         return c.fetchall()
 
 def extract_country_from_filename(filename):
+    """Extract country name from filename - handles spaces, dashes, multiple words"""
     try:
         name = filename.replace('.txt', '')
+        # Split by underscore to separate country from service
+        if '_' in name:
+            country_part = name.split('_')[0].strip()
+        else:
+            country_part = name.strip()
+        
+        # Try exact match first
         for country_name in COUNTRIES_DATA.keys():
-            if country_name.lower() in name.lower():
+            if country_name.lower() == country_part.lower():
                 return country_name
-        return None
+        
+        # Try partial match - check if country_part starts with any known country
+        for country_name in COUNTRIES_DATA.keys():
+            if country_part.lower().startswith(country_name.lower()) or country_name.lower().startswith(country_part.lower()):
+                return country_name
+        
+        # Try contains match
+        for country_name in COUNTRIES_DATA.keys():
+            if country_name.lower() in country_part.lower() or country_part.lower() in country_name.lower():
+                return country_name
+        
+        # If no match found, return the raw country part
+        return country_part
     except Exception:
         return None
 
 def extract_service_from_filename(filename):
+    """Extract service name from filename - everything after underscore"""
     try:
         name = filename.replace('.txt', '').lower()
+        if '_' in name:
+            service_part = name.split('_', 1)[1].strip()
+        else:
+            return "Unknown"
+        
+        # Try to match with known services
         services = [row[0] for row in db_fetch_all("SELECT name FROM services WHERE active = 1")]
         for service in services:
-            if service.lower() in name:
+            if service.lower() in service_part:
                 return service
-        return "Unknown"
+        
+        # If no match, return the raw service part
+        return service_part
     except Exception:
         return "Unknown"
 
